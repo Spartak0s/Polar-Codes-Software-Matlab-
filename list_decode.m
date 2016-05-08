@@ -1,4 +1,4 @@
-function best_outputs =  list_decode(llr_inputs,frozen_bits,L)
+function best_outputs =  list_decode(llr_inputs,frozen_bits,L,crc,crc_len)
 threads = 1;
 N = length(llr_inputs);
 llr_array = zeros(N,L);
@@ -63,10 +63,18 @@ for i=1:1:N %Arikan 0:1:N-1
     end
 end
 % computer the best_outputs
-[values,indexes] = sort(path_metrics);
-j=1;
-while(values(j) == 0)
-    j = j + 1;
+crc_picked = 0;
+for i=1:1:L
+    if((crcCheck(transform_outputs(outputs(i,:),frozen_bits,N),crc,crc_len) == 0) && (crc_picked == 0))
+        crc_picked = 1;
+        index = i;
+    elseif((crcCheck(transform_outputs(outputs(i,:),frozen_bits,N),crc,crc_len) == 0) && (crc_picked == 1) && path_metrics(index) > path_metrics(i))
+        index = i;       
+    end
 end
-best_outputs = outputs(indexes(1),:);
+if(crc_picked == 0)
+    [values,indexes] = sort(path_metrics);
+    index = indexes(1);
+end
+best_outputs = outputs(index,:);    
 end
