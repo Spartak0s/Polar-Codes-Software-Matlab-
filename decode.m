@@ -1,7 +1,7 @@
 function outputs = decode(llr_inputs,frozen_bits)
 bits = length(llr_inputs);
 reverse_order = bitrevorder(1:1:bits); %same as 0:1:bits-1
-sc_array = sc_array_initialize(bits,llr_inputs);%--BIT_REVERSED ARRAY-- outputs(i,l,dimension) // dimension= 1 values -- 2 !! if 0 then f else g !!-- 3 2nd input
+sc_array = sc_array_initialize(bits,llr_inputs);       %--BIT_REVERSED ARRAY-- outputs(i,l,dimension) // dimension= 1 values -- 2 !! if 0 then f else g !!-- 3 2nd input
 partial_sum_adders = partial_sums_initialize(bits);   %!!!!! NOT bit_reversed array -- %outputs(z,i,l) -- l stage ,bit Ui is added,z is the number of g adder
 outputs = zeros(1,bits);        %NOT bit_reversed_array
 for bit=1:1:bits %Arikan 0:1:bits-1
@@ -18,7 +18,7 @@ for bit=1:1:bits %Arikan 0:1:bits-1
             end
         end
     end
-    if(sc_array(reverse_order(bit),1,1)<0 && frozen_bits(bit)==1)       %if it's not frozen bit, update value
+    if(sc_array(reverse_order(bit),1,1)<0 && frozen_bits(bit)==1)      %if it's not frozen bit, update value
         outputs(bit)=1;
     end
 end
