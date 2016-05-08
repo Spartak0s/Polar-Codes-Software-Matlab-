@@ -6,7 +6,7 @@ function frozen_bits = initialize_frozen_bits( N, K, capacity )
     [capacity_array,sortIndex] = sort(capacity_array(:));
     frozen_bits = ones(1,N);
     for i=1:1:N-K
-        frozen_bits(sortIndex(i)) = 0;
+        frozen_bits(sortIndex(i)) = 0; %set frozen
     end
         
 end
