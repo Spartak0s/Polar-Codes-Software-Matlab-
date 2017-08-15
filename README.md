@@ -1,4 +1,3 @@
 # Polar-Codes
-Polar Codes on Matlab Simulation, for my Thesis Project in Electrical and Computer Engineering.
-Succesive Cancellation schema, encoding-decoding.
+Polar Codes Simulation on Matlab, for my [Thesis Project](./Polar%20Codes%20Diploma%20Thesis.pdf) in Electrical and Computer Engineering at University of Patras. Succesive Cancellation schema, encoding-decoding.<br /><br />
 Alexander El-Kady, elkady.alexander@gmail.com
