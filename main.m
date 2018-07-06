@@ -1,7 +1,19 @@
 clc;clear;
+start_time = clock;
+timestamp = [num2str(start_time(1),'%04d') '_' num2str(start_time(2),'%02d') '_' num2str(start_time(3),'%02d') '_' num2str(start_time(4),'%02d') '_' num2str(start_time(5),'%02d') '_' num2str(start_time(6),'%2.0f')];
 result_path = './results/';
-file = fopen([result_path 'ber.txt'],'w');
+file = fopen([result_path 'polar_test_' timestamp '.txt'],'w');
 addpath('support');
+Fading_Channel = 0;     %0: AWGN, 1:Fading Channel
+Fading_Independent = 0; %if Fading_Channel = 1
+quasi = 0;              % quasi channel
+fading_channel = 'TU120';   %custom matlab channel
+fix_seed = 1;           %1:fix data, 0:random data
+if fix_seed
+    rng(sum(100*clock));
+else
+    rand('seed',123456);
+end
 for n = 6%[2,3,4,5,6,7,8,9] %N=2^n
 N = power(2,n);      %Code Length
 K = N/2;      %Code keyword length
@@ -25,7 +37,7 @@ encoded_inputs = encode(inputs_to_encode);      %Reversed Polar Encoding
 %modulate
 modulated_inputs = modulate(encoded_inputs);%encoded_inputs);        %BPSK = 1-2*encoded_inputs(i)
 %noise
-noised_inputs = add_noise(modulated_inputs,SNRdb);        %awgn noise (0,SNR) SNR in db !!!not s^2
+noised_inputs = add_noise(modulated_inputs,Fading_Channel,Fading_Independent,fading_channel,SNRdb);
 %demodulate
 llr = (2 * power(10,SNRdb/10))*noised_inputs;       %CARE NEGATIVE SIGN.2*yi/(s^2) = ln(Li), s^2 = 1/ 10^ (SNRdb/10)
 %decode
