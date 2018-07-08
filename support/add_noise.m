@@ -1,4 +1,4 @@
-function channel_out = add_noise(inputs,Fading_Channel,Fading_Independent,fading_channel,snr)
+function channel_out = add_noise(inputs,constDims,Fading_Channel,Fading_Independent,fading_channel,snr)
 %takes modulated inputs, adds AWGN/Fading noise with SNR in db.
 if Fading_Channel && ~Fading_Independent
     legacychannelsim(true);
@@ -40,10 +40,13 @@ else	% AWGN Channel
     attenu = 1;
     phase = 0;
 end
-constDims = 2;
+
 noise_dev = sqrt(10^(-snr/10)/constDims);
-channel_out = noise_dev*complex(randn(1,length(inputs)),randn(1,length(inputs))) ...
-        + in_decoder_tmp;
+%BPSK
+channel_out = noise_dev*(randn(1,length(inputs))) + in_decoder_tmp;
+%QPSK    
+% channel_out = noise_dev*complex(randn(1,length(inputs)),randn(1,length(inputs))) ...
+%         + in_decoder_tmp;
 
 %old noise addition based on awgn
 % channel_out = awgn(inputs,snr,'measured');
