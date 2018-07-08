@@ -52,7 +52,7 @@ bit_error_rate(i_index) = bit_errors/(codewords_tmp*K);
 fer_error_rate(i_index) = fer_errors/(codewords_tmp);
 codewords(i_index) = codewords_tmp;
 save(mat_file,'snrdb_values','bit_error_rate','fer_error_rate','codewords','N','K');
-fprintf('SNRdb = %d\tber=%0.8f,fer=%0.8f\n',snrdb_values(i_index),bit_error_rate(i_index),fer_error_rate(i_index));
+fprintf('SNRdb = %.1f\tber=%0.2f,fer=%0.2f\n',snrdb_values(i_index),bit_error_rate(i_index),fer_error_rate(i_index));
 end
 % file = fopen([result_path 'results_N=' num2str(N) '_SNR=' num2str(snrdb_values(1)) '-' num2str(snrdb_values(end)) '.txt'],'w');
 % fprintf(file,'0]\n');
