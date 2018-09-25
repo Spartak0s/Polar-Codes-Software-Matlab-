@@ -15,7 +15,10 @@ for index_n = 1:length(n_values)                    %N=2^n
         codewords_tmp = 0;fer_errors = 0;bit_errors = 0;
         snr = snrdb_values(i_index);
         while (fer_errors<min_fer_errors || codewords_tmp<min_codewords)
-            codewords_tmp = codewords_tmp + 1;
+            bit_errors_parfor = zeros(1,parallel_frames);
+            fer_errors_parfor = zeros(1,parallel_frames);
+%             for frame = 1:parallel_frames
+            parfor frame = 1:parallel_frames
             inputs = rand(1,K)>0.5;    %write random inputs
             %transform inputs
             inputs_to_encode = transform_inputs(inputs,frozen_bits,N);
@@ -38,8 +41,12 @@ for index_n = 1:length(n_values)                    %N=2^n
             %Calculate temporary bit/frame errors
             final_outputs = transform_outputs(outputs,frozen_bits,N);
             temp_bit_errors = size(find(final_outputs ~= inputs),2);
-            bit_errors = bit_errors + temp_bit_errors;
-            fer_errors = fer_errors + (temp_bit_errors>0);
+            bit_errors_parfor(frame) = temp_bit_errors;
+            fer_errors_parfor(frame) = (temp_bit_errors>0);
+            end
+            codewords_tmp = codewords_tmp + parallel_frames;
+            bit_errors = bit_errors + sum(bit_errors_parfor);
+            fer_errors = fer_errors + sum(fer_errors_parfor);
         end
         %Calculate snr bit/frame errors
         bit_error_rate(index_n,i_index) = bit_errors/(codewords_tmp*K);

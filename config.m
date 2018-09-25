@@ -4,7 +4,7 @@ addpath('support');
 %% Configure parameters
 %Polar-Code values
 capacity = 0.5; %I(W), Channel's W Capacity
-n_values = [4,5,6,7,8,9,10];     %value of N
+n_values = [4,5,6,7,8];     %value of N
 code_rate = 1/4;
 %EbNo
 EbNo_dB = 0:5; %AWGN -4:2 %Fading 0:2:10
@@ -28,6 +28,30 @@ min_codewords = 100;    %minimum codewords to count
 NbitsPerSymbol = 1;     %modulation parameter
 constDims = 1;          %modulation parameter
 snrdb_values =EbNo_dB+10*log10(double(code_rate*NbitsPerSymbol*2/constDims));
+%% Parfor configuration
+FLAG_Enable_parpool=1;    % 0: Disable, 1: Enable
+parcore_nums = 4;
+if FLAG_Enable_parpool
+    % determine the number of physical cores
+    corenum = feature('numcores');
+    parcorenum = parcore_nums;
+    % parcorenum = 15; %  # of workers
+    p = gcp('nocreate');   % Not create new pool if it does not exist
+    if isempty(p)
+        p = parcluster('local');
+        p.NumWorkers = parcorenum;
+        parpool(p, p.NumWorkers);
+    end
+    if p.NumWorkers ~= parcorenum
+        delete(p);
+        p = parcluster('local');
+        p.NumWorkers = parcorenum;
+        parpool(p, p.NumWorkers);
+    end
+    parallel_frames = 100*parcorenum;
+else
+    parallel_frames = 10;
+end
 %% Variable Initializations
 bit_error_rate = zeros(length(n_values),length(snrdb_values));
 fer_error_rate = zeros(length(n_values),length(snrdb_values));
