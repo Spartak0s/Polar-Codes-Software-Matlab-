@@ -10,7 +10,7 @@ if (l ==1)
     end
 else
     if (mod(floor((j-1)/power(2,l-2)),2) == 0)
-        output = xor(s_f(l-1,j,frozen_bits,estimated),s_f(l-1,j+power(2,l-2),frozen_bits,estimated));
+        output = double(xor(s_f(l-1,j,frozen_bits,estimated),s_f(l-1,j+power(2,l-2),frozen_bits,estimated)));
     else
         output = s_f(l-1,j,frozen_bits,estimated);
     end

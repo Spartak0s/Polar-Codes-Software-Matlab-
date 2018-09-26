@@ -1,6 +1,7 @@
 function [sc_function,sc_2nd_indxs] = sc_array_initialize(bits)
 %decoding initialization
-outputs = zeros(bits,log2(bits)+1,3);%outputs(i-1,l-1,dimension) // dimension= 1 values/dimension=2 if 0 then f else g/dimension=3 2nd input
+%sc_function:if 0 then f else g
+%sc_2nd_indxs: index of 2nd input
 sc_function = zeros(bits,log2(bits)+1);
 sc_2nd_indxs = zeros(bits,log2(bits)+1);
 reverse_i = bitrevorder(1:1:bits);

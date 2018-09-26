@@ -7,7 +7,7 @@ for index_n = 1:length(n_values)                    %N=2^n
     K = N* code_rate;                               %Code keyword length
     mat_file = [result_path 'polar_N' num2str(N) '_K' num2str(K) '_' timestamp '.mat'];
     %Polar-code initializations
-    [Fn,frozen_bits,partial_sum_adders, sc_functions, sc_2nd_indxs] = polar_initialization(N, K, capacity);
+    [Fn,frozen_bits, frozen_indxs, non_frozen_indxs, partial_sum_adders, sc_functions, sc_2nd_indxs] = polar_initialization(N, K, capacity);
     fprintf("Polar Code %d/%d running:\n",N,K);
     %% SNR LOOP
     for i_index = 1:length(snrdb_values)
@@ -17,11 +17,11 @@ for index_n = 1:length(n_values)                    %N=2^n
         while (fer_errors<min_fer_errors || codewords_tmp<min_codewords)
             bit_errors_parfor = zeros(1,parallel_frames);
             fer_errors_parfor = zeros(1,parallel_frames);
-%             for frame = 1:parallel_frames
-            parfor frame = 1:parallel_frames
+            for frame = 1:parallel_frames
+%             parfor frame = 1:parallel_frames
             inputs = rand(1,K)>0.5;    %write random inputs
             %transform inputs
-            inputs_to_encode = transform_inputs(inputs,frozen_bits,N);
+            inputs_to_encode = transform_inputs(inputs,non_frozen_indxs,N);
             %encode
             encoded_inputs = encode(inputs_to_encode,Fn);      %Reversed Polar Encoding
             %modulate
@@ -38,9 +38,9 @@ for index_n = 1:length(n_values)                    %N=2^n
                 %hardware-version (suboptimal-calculations of f/g)
                 outputs = decode(llr,frozen_bits,partial_sum_adders,sc_functions,sc_2nd_indxs); %or decode2(llr,frozen_bits); for the other algorithm
             end
+            final_outputs = outputs(non_frozen_indxs);%transform_outputs(outputs,frozen_bits,N);
             %Calculate temporary bit/frame errors
-            final_outputs = transform_outputs(outputs,frozen_bits,N);
-            temp_bit_errors = size(find(final_outputs ~= inputs),2);
+            temp_bit_errors = sum(final_outputs ~= inputs);
             bit_errors_parfor(frame) = temp_bit_errors;
             fer_errors_parfor(frame) = (temp_bit_errors>0);
             end

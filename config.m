@@ -14,23 +14,30 @@ Fading_Channel = 0;     %0: AWGN, 1:Fading Channel
 Fading_Independent = 0; %if Fading_Channel = 1
 quasi = 0;              % quasi channel
 fading_channel = 'TU120';   %custom matlab channel
-
+%seed
 fix_seed = 1;           %1:fix data, 0:random data
-if fix_seed
-    rng(sum(100*clock));
-else
-    rand('seed',123456);
-end
 %Simulation values
-fast_run = 1;           %1:run of optimal-matlab code, 0:run of hardware-code (suboptimal f/g)
+fast_run = 1;           %1:run of optimal-matlab code + mex-files, 0:run of hardware-code (suboptimal f/g)
 min_fer_errors = 100;   %minimum frame errors to count
 min_codewords = 100;    %minimum codewords to count
 NbitsPerSymbol = 1;     %modulation parameter
 constDims = 1;          %modulation parameter
 snrdb_values =EbNo_dB+10*log10(double(code_rate*NbitsPerSymbol*2/constDims));
 %% Parfor configuration
-FLAG_Enable_parpool=1;    % 0: Disable, 1: Enable
+FLAG_Enable_parpool=0;    % 0: Disable, 1: Enable
 parcore_nums = 4;
+%% Initializations
+%add mex-files
+if(fast_run == 1)
+    addpath('./support/mex_files');
+end
+%initialize seed
+if fix_seed
+    rng(sum(100*clock));
+else
+    rand('seed',123456);
+end
+%initialize parcorenum
 if FLAG_Enable_parpool
     % determine the number of physical cores
     corenum = feature('numcores');
@@ -50,7 +57,7 @@ if FLAG_Enable_parpool
     end
     parallel_frames = 100*parcorenum;
 else
-    parallel_frames = 10;
+    parallel_frames = 100;
 end
 %% Variable Initializations
 bit_error_rate = zeros(length(n_values),length(snrdb_values));
