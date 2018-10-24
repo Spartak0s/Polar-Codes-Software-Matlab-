@@ -1,6 +1,5 @@
 timestamp = [num2str(start_time(1),'%04d') '_' num2str(start_time(2),'%02d') '_' num2str(start_time(3),'%02d') '_' num2str(start_time(4),'%02d') '_' num2str(start_time(5),'%02d') '_' num2str(start_time(6),'%2.0f')];
 result_path = './results/';
-addpath('support');
 %% Configure parameters
 %Polar-Code values
 capacity = 0.5; %I(W), Channel's W Capacity
@@ -17,6 +16,7 @@ fading_channel = 'TU120';   %custom matlab channel
 %seed
 fix_seed = 1;           %1:fix data, 0:random data
 %Simulation values
+decoding_algorithm = 'MSA';     % Set as 'SPA' for Sum-Product algorithm , or 'MSA' for Min-Sum Algorithm.
 fast_run = 1;           %1:run of optimal-matlab code + mex-files, 0:run of hardware-code (suboptimal f/g)
 min_fer_errors = 100;   %minimum frame errors to count
 min_codewords = 100;    %minimum codewords to count
@@ -27,8 +27,11 @@ snrdb_values =EbNo_dB+10*log10(double(code_rate*NbitsPerSymbol*2/constDims));
 FLAG_Enable_parpool=0;    % 0: Disable, 1: Enable
 parcore_nums = 4;
 %% Initializations
-%add mex-files
-if(fast_run == 1)
+%add required matlab paths
+restoredefaultpath;
+addpath('support');
+addpath(['./support/f_function/' decoding_algorithm]);  % for l_f function.
+if(fast_run == 1)   % for mex-files
     addpath('./support/mex_files');
 end
 %initialize seed
