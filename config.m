@@ -35,7 +35,7 @@ if(fast_run == 1)   % for mex-files
     addpath('./support/mex_files');
 end
 %initialize seed
-if fix_seed
+if ~fix_seed
     rng(sum(100*clock));
 else
     rand('seed',123456);
