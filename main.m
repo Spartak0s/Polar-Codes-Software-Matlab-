@@ -31,12 +31,17 @@ for index_n = 1:length(n_values)                    %N=2^n
             %demodulate
             llr = (2 * power(10,snrdb_values(i_index)/10))*noised_inputs;       %CARE NEGATIVE SIGN.2*yi/(s^2) = ln(Li), s^2 = 1/ 10^ (SNRdb/10)
             %decode
-            if(fast_run)
-                %optimal version (optimal-calculations of f/g)
-                outputs = decode2(llr,frozen_bits);
+            if(sc_decoding)
+                if(fast_run)
+                    %optimal version (optimal-calculations of f/g)
+                    outputs = decode2(llr,frozen_bits);
+                else
+                    %hardware-version (suboptimal-calculations of f/g)
+                    outputs = decode(llr,frozen_bits,partial_sum_adders,sc_functions,sc_2nd_indxs); %or decode2(llr,frozen_bits); for the other algorithm
+                end
             else
-                %hardware-version (suboptimal-calculations of f/g)
-                outputs = decode(llr,frozen_bits,partial_sum_adders,sc_functions,sc_2nd_indxs); %or decode2(llr,frozen_bits); for the other algorithm
+                iterations = 50;
+                outputs = bp_decode(llr,frozen_bits,sc_functions,sc_2nd_indxs,iterations); %or decode2(llr,frozen_bits); for the other algorithm
             end
             final_outputs = outputs(non_frozen_indxs);%transform_outputs(outputs,frozen_bits,N);
             %Calculate temporary bit/frame errors
