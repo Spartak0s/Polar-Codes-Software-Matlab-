@@ -7,7 +7,7 @@ capacity = 0.5; %I(W), Channel's W Capacity
 n_values = [3,4,5,6,7,8];     %value of N
 code_rate = 1/4;
 %EbNo
-EbNo_dB = 0:5; %AWGN -4:2 %Fading 0:2:10
+EbNo_dB = 0:4; %AWGN -4:2 %Fading 0:2:10
 %Channel
 Fading_Channel = 0;     %0: AWGN, 1:Fading Channel
 %fading only parameters
